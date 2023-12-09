@@ -214,6 +214,25 @@ public class Matrix {
             this.matrix = newMatrix;
         }
     }
+    public void addRowBefore(int index, double[] row)
+    {
+        if (row.length != this.columnsCount)
+        { System.out.println(Main.ERROR + "Невозможно добавить строку в исходную матрицу из-за несоответсвия количества столбцов" + Main.RESET); }
+        else
+        {
+            this.rowsCount ++;
+            double[][] newMatrix = new double[this.rowsCount][this.columnsCount];
+            newMatrix[index] = row;
+            for (int i = 0; i < this.rowsCount; i++)
+            {
+                if (i < index)
+                    newMatrix[i] = this.matrix[i];
+                else if (i > index)
+                    newMatrix[i] = this.matrix[i - 1];
+            }
+            this.matrix = newMatrix;
+        }
+    }
     void deleteRow(int index)
     {
         if (index > this.rowsCount || index < 0)
@@ -266,6 +285,28 @@ public class Matrix {
                     if (j < index + 1)
                         newMatrix[i][j] = this.getItem(i, j);
                     else if (j > index + 1)
+                        newMatrix[i][j] = this.getItem(i, j - 1);
+                }
+            }
+            this.matrix = newMatrix;
+        }
+    }
+    public void addColumnBefore(int index, double[] column)
+    {
+        if (column.length != this.rowsCount)
+        { System.out.println(Main.ERROR + "Невозможно добавить столбец в исходную матрицу из-за несоответсвия количества строк" + Main.RESET); }
+        else
+        {
+            this.columnsCount ++;
+            double[][] newMatrix = new double[this.rowsCount][this.columnsCount];
+            for (int i = 0; i < this.rowsCount; i++)
+            {
+                newMatrix[i][index] = column[i];
+                for (int j = 0; j < this.columnsCount; j++)
+                {
+                    if (j < index)
+                        newMatrix[i][j] = this.getItem(i, j);
+                    else if (j > index)
                         newMatrix[i][j] = this.getItem(i, j - 1);
                 }
             }
