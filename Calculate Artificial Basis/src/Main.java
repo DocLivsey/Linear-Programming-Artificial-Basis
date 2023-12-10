@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class Main {
@@ -14,8 +15,12 @@ public class Main {
         String pathToObjFunction = "src/objFunctionInput.txt";
         String pathToConstraints = "src/constraintsInput.txt";
 
-        CanonicalSimplexMatrix canonicalSimplex = new CanonicalSimplexMatrix(pathToValuesMatrix, pathToObjFunction, pathToConstraints);
-        canonicalSimplex.setDeltaGrades(canonicalSimplex.calculateDeltaGrades());
-        canonicalSimplex.printDeltaGrades();
+        Vector<String> vector = new Vector<>(Arrays.stream(new String[]{"1", "2", "3"}).toList());
+        SimplexTableColumn column = new SimplexTableColumn(1, vector);
+        System.out.println(column.getColumn());
+        
+
+        SimplexTable table = new SimplexTable(pathToValuesMatrix, pathToObjFunction, pathToConstraints);
+        table.printTable();
     }
 }

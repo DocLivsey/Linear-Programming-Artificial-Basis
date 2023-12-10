@@ -5,20 +5,23 @@ public class CanonicalSimplexMatrix {
     protected CanonicalSimplexMatrix prevSimplexMatrix;
     protected CanonicalSimplexMatrix nextSimplexMatrix;
     protected Vector<Double> objectiveFunction;
-    protected Vector<Double> constraint;
+    protected Vector<Double> constraints;
     protected Vector<Double> basisValue;
     protected Vector<String> basis;
+    protected Vector<String> variables;
     protected Vector<Double> deltaGrades;
     protected Vector<String> solution;
     protected String solutionExplain;
     CanonicalSimplexMatrix(String pathToValuesMatrix, String pathToObjFunction, String pathToConstraints) throws FileNotFoundException {
         this.simplexMatrix = this.readSimplexMatrixFromFile(pathToValuesMatrix);
         this.objectiveFunction = this.readVectorFromFile(pathToObjFunction);
-        this.constraint = this.readVectorFromFile(pathToConstraints);
+        this.constraints = this.readVectorFromFile(pathToConstraints);
         this.prevSimplexMatrix = null;
         this.nextSimplexMatrix = new CanonicalSimplexMatrix(this);
         this.basisValue = new Vector<>();
         this.basis = new Vector<>();
+        this.variables = new Vector<>();
+        this.setVariables();
         this.deltaGrades = new Vector<>();
         this.solution = new Vector<>();
         this.solutionExplain = "Решений нет";
@@ -29,9 +32,11 @@ public class CanonicalSimplexMatrix {
         this.prevSimplexMatrix = prevSimplexMatrix;
         this.nextSimplexMatrix = null;
         this.objectiveFunction = prevSimplexMatrix.getObjectiveFunction();
-        this.constraint = constraint;
+        this.constraints = constraint;
         this.basisValue = basisValue;
         this.basis = basis;
+        this.variables = new Vector<>();
+        this.setVariables();
         this.deltaGrades = new Vector<>();
         this.solution = prevSimplexMatrix.getSolution();
         this.solutionExplain = prevSimplexMatrix.getSolutionExplain();
@@ -42,9 +47,11 @@ public class CanonicalSimplexMatrix {
         this.prevSimplexMatrix = prevSimplexMatrix;
         this.nextSimplexMatrix = null;
         this.objectiveFunction = new Vector<>();
-        this.constraint = new Vector<>();
+        this.constraints = new Vector<>();
         this.basisValue = new Vector<>();
         this.basis = new Vector<>();
+        this.variables = new Vector<>();
+        this.setVariables();
         this.deltaGrades = new Vector<>();
         this.solution = new Vector<>();
         this.solutionExplain = "Решений нет";
@@ -61,14 +68,17 @@ public class CanonicalSimplexMatrix {
     public Vector<Double> getObjectiveFunction() {
         return objectiveFunction;
     }
-    public Vector<Double> getConstraint() {
-        return constraint;
+    public Vector<Double> getConstraints() {
+        return constraints;
     }
     public Vector<Double> getBasisValue() {
         return basisValue;
     }
     public Vector<String> getBasis() {
         return basis;
+    }
+    public Vector<String> getVariables() {
+        return variables;
     }
     public Vector<String> getSolution() {
         return solution;
@@ -91,14 +101,18 @@ public class CanonicalSimplexMatrix {
     public void setObjectiveFunction(Vector<Double> objectiveFunction) {
         this.objectiveFunction = objectiveFunction;
     }
-    public void setConstraint(Vector<Double> constraint) {
-        this.constraint = constraint;
+    public void setConstraints(Vector<Double> constraints) {
+        this.constraints = constraints;
     }
     public void setBasis(Vector<String> basis) {
         this.basis = basis;
     }
     public void setBasisValue(Vector<Double> basisValue) {
         this.basisValue = basisValue;
+    }
+    public void setVariables() {
+        for (int i = 0; i < this.simplexMatrix.getColumnsCount(); i++)
+            this.variables.add(i, "X" + (i + 1));
     }
     public void setSolution(Vector<String> solution) {
         this.solution = solution;
@@ -125,7 +139,7 @@ public class CanonicalSimplexMatrix {
     {
         Vector<Double> calculationDeltaGrade = new Vector<>(this.simplexMatrix.getColumnsCount() + 1);
         double delta = 0;
-        for (double constraint : this.constraint)
+        for (double constraint : this.constraints)
             delta += constraint;
         calculationDeltaGrade.add(0, delta);
         for (int colInd = 0; colInd < this.simplexMatrix.getColumnsCount(); colInd++)

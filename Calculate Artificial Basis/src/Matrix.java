@@ -62,6 +62,8 @@ public class Matrix {
     }
     int getRowsCount()
     { return this.rowsCount; }
+    public double[] getRow(int index)
+    { return this.matrix[index]; }
     int getColumnsCount()
     { return this.columnsCount; }
     double[][] getMatrix()
@@ -536,5 +538,28 @@ public class Matrix {
             inversiveMatrix = inversiveMatrix.constantMultiplication(1 / determinant);
         }
         return inversiveMatrix;
+    }
+    public static Matrix setIdentityMatrix(int size)
+    {
+        Matrix identityMatrix = new Matrix(size, size);
+        for (int i = 0; i < size; i++)
+            identityMatrix.setItem(i, i ,1);
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (identityMatrix.getItem(i, j) != 1)
+                    identityMatrix.setItem(i, j, 0);
+        return identityMatrix;
+    }
+    public Vector<String> rowToStringVector(int index)
+    {
+        double[] row = this.getRow(index);
+        Vector<String> strRow = new Vector<>();
+        for (double i : row)
+        {
+            DecimalFormat formattedOut = new DecimalFormat("#.##");
+            String result = formattedOut.format(i);
+            strRow.add(result);
+        }
+        return strRow;
     }
 }
