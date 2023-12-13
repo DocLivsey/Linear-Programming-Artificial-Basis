@@ -556,9 +556,8 @@ public class Matrix {
         Vector<String> strRow = new Vector<>();
         for (double i : row)
         {
-            DecimalFormat formattedOut = new DecimalFormat("#.##");
-            String result = formattedOut.format(i);
-            strRow.add(result);
+            DecimalFormat formattedOut = new DecimalFormat("#.####");
+            strRow.add(formattedOut.format(i));
         }
         return strRow;
     }

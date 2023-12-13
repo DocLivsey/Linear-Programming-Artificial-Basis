@@ -1,7 +1,5 @@
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-import java.util.Vector;
-
+import java.io.*;
+import java.util.*;
 public class Main {
     public static final String RESET = "\u001B[0m";
     public static final String ERROR = "\u001B[31m"; // RED
@@ -15,12 +13,8 @@ public class Main {
         String pathToObjFunction = "src/objFunctionInput.txt";
         String pathToConstraints = "src/constraintsInput.txt";
 
-        Vector<String> vector = new Vector<>(Arrays.stream(new String[]{"1", "2", "3"}).toList());
-        SimplexTableColumn column = new SimplexTableColumn(1, vector);
-        System.out.println(column.getColumn());
-        
+        ArtificialBasisExpansion simplex = new ArtificialBasisExpansion(pathToValuesMatrix, pathToObjFunction, pathToConstraints);
+        simplex.ArtificialBasisMethod();
 
-        SimplexTable table = new SimplexTable(pathToValuesMatrix, pathToObjFunction, pathToConstraints);
-        table.printTable();
     }
 }

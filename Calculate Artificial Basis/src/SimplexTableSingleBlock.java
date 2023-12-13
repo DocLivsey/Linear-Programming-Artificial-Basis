@@ -79,9 +79,9 @@ public class SimplexTableSingleBlock {
         {
             spacesCount = this.blockSize - (this.singleBlockContent.length() + 2);
             spaces = " ".repeat(spacesCount / 2);
-            this.setTopBorder("|" + "—".repeat(this.blockSize - 2) + "|");
-            this.setBottomBorder("|" + "—".repeat(this.blockSize - 2) + "|");
-            strBlock = "|" + spaces + this.singleBlockContent + spaces + "|";
+            this.setTopBorder("|" + "—".repeat(this.blockSize - 2) + "|\n");
+            this.setBottomBorder("|" + "—".repeat(this.blockSize - 2) + "|\n");
+            strBlock = "|" + spaces + this.singleBlockContent + spaces + "|\n";
             this.setSingleBlock(this.topBorder + strBlock + this.bottomBorder);
         }
         else if (this.blockRowNumber == 0)
@@ -89,32 +89,32 @@ public class SimplexTableSingleBlock {
 
             spacesCount = this.blockSize - (this.singleBlockContent.length() + 1);
             spaces = " ".repeat(spacesCount / 2);
-            this.setTopBorder("—".repeat(this.blockSize - 1) + "|");
-            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|");
-            strBlock = spaces + this.singleBlockContent + spaces + "|";
+            this.setTopBorder("—".repeat(this.blockSize - 1) + "|\n");
+            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|\n");
+            strBlock = spaces + this.singleBlockContent + spaces + "|\n";
             this.setSingleBlock(this.topBorder + strBlock + this.bottomBorder);
         }
         else if (this.blockColumnNumber == 0)
         {
             spacesCount = this.blockSize - (this.singleBlockContent.length() + 1);
             spaces = " ".repeat(spacesCount / 2);
-            this.setBottomBorder("|" + "—".repeat(this.blockSize - 2) + "|");
-            strBlock = "|" + spaces + this.singleBlockContent + spaces + "|";
+            this.setBottomBorder("|" + "—".repeat(this.blockSize - 2) + "|\n");
+            strBlock = "|" + spaces + this.singleBlockContent + spaces + "|\n";
             this.setSingleBlock(strBlock + this.bottomBorder);
         }
         else if (this.blockRowNumber == blocksCount - 1)
         {
             spacesCount = this.blockSize - (this.singleBlockContent.length() + 1);
             spaces = " ".repeat(spacesCount / 2);
-            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|");
-            strBlock = spaces + this.singleBlockContent + spaces + "|";
+            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|\n");
+            strBlock = spaces + this.singleBlockContent + spaces + "|\n";
         }
         else
         {
             spacesCount = this.blockSize - (this.singleBlockContent.length() + 1);
             spaces = " ".repeat(spacesCount / 2);
-            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|");
-            strBlock = spaces + this.singleBlockContent + spaces + "|";
+            this.setBottomBorder("—".repeat(this.blockSize - 1) + "|\n");
+            strBlock = spaces + this.singleBlockContent + spaces + "|\n";
             this.setSingleBlock(strBlock + this.bottomBorder);
         }
     }

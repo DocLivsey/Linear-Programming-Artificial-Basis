@@ -1,82 +1,100 @@
 import java.io.*;
 import java.util.*;
 public class SimplexTable {
-    protected Vector<SimplexTableColumn> simplexTable;
-    protected ArrayList<Vector<String>> simplexTableContent;
-    protected SimplexTable prevSimplexTable;
-    protected SimplexTable nextSimplexTable;
+    protected Vector<SimplexTableRow> simplexTable;
+    protected HashMap<Integer, Integer> columnsWidth;
+    protected int tableHeight;
+    protected Vector<Vector<String>> simplexTableContent;
     protected ArtificialBasisExpansion simplexMatrix;
     SimplexTable(String pathToValuesMatrix, String pathToObjFunction, String pathToConstraints) throws FileNotFoundException
     {
+        this.columnsWidth = new HashMap<>();
         this.simplexMatrix = new ArtificialBasisExpansion(pathToValuesMatrix, pathToObjFunction, pathToConstraints);
-        this.simplexTableContent = this.simplexMatrix.convertToCorrectStringFormat();
-        this.prevSimplexTable = new SimplexTable((ArtificialBasisExpansion) this.simplexMatrix.getPrevSimplexMatrix());
-        this.nextSimplexTable = new SimplexTable((ArtificialBasisExpansion) this.simplexMatrix.getNextSimplexMatrix());
+        this.tableHeight = simplexMatrix.getConstraints().size() + 3;
+        this.simplexTableContent = new Vector<>();
+        this.createTable();
     }
     SimplexTable(ArtificialBasisExpansion simplexMatrix)
     {
+        this.columnsWidth = new HashMap<>();
         this.simplexMatrix = simplexMatrix;
-        this.simplexTableContent = this.simplexMatrix.convertToCorrectStringFormat();
-        this.prevSimplexTable = new SimplexTable((ArtificialBasisExpansion) this.simplexMatrix.getPrevSimplexMatrix());
-        this.nextSimplexTable = new SimplexTable((ArtificialBasisExpansion) this.simplexMatrix.getNextSimplexMatrix());
+        this.tableHeight = simplexMatrix.getConstraints().size() + 3;
+        this.simplexTableContent = this.simplexMatrix.transposeConvertToCorrectStringFormat();
+        this.createTable();
     }
-    public Vector<SimplexTableColumn> getSimplexTable() {
+    public Vector<SimplexTableRow> getSimplexTable() {
         return simplexTable;
     }
-    public ArrayList<Vector<String>> getSimplexTableContent() {
+    public HashMap<Integer, Integer> getColumnsWidth() {
+        return columnsWidth;
+    }
+    public int getTableHeight() {
+        return tableHeight;
+    }
+    public Integer getColumnWidthByIndex(int index) {
+        return this.columnsWidth.get(index);
+    }
+    public Vector<Vector<String>> getSimplexTableContent() {
         return simplexTableContent;
     }
-    public SimplexTable getPrevSimplexTable() {
-        return prevSimplexTable;
-    }
-    public SimplexTable getNextSimplexTable() {
-        return nextSimplexTable;
-    }
-    public CanonicalSimplexMatrix getSimplexMatrix() {
+
+    public ArtificialBasisExpansion getSimplexMatrix() {
         return simplexMatrix;
     }
-    public void setSimplexTable(Vector<SimplexTableColumn> simplexTable) {
+    public void setSimplexTable(Vector<SimplexTableRow> simplexTable) {
         this.simplexTable = simplexTable;
     }
-    public void setSimplexTableContent(ArrayList<Vector<String>> simplexTableContent) {
+    public void setColumnsWidth(HashMap<Integer, Integer> columnsWidth) {
+        this.columnsWidth = columnsWidth;
+    }
+    public void setTableHeight(int tableHeight) {
+        this.tableHeight = tableHeight;
+    }
+    public void setColumnWidthByIndex(int index, int width) {
+        this.columnsWidth.put(index, width);
+    }
+    public void setSimplexTableContent(Vector<Vector<String>> simplexTableContent) {
         this.simplexTableContent = simplexTableContent;
     }
-    public void setPrevSimplexTable(SimplexTable prevSimplexTable) {
-        this.prevSimplexTable = prevSimplexTable;
-    }
-    public void setNextSimplexTable(SimplexTable nextSimplexTable) {
-        this.nextSimplexTable = nextSimplexTable;
-    }
+
     public void setSimplexMatrix(ArtificialBasisExpansion simplexMatrix) {
         this.simplexMatrix = simplexMatrix;
     }
-    public int calculateBlockSize(int index)
+    public void calculateBlocksSize()
     {
-        int size = 0;
-        for (String item : this.simplexTableContent.get(index))
-            size = Math.max(item.length(), size);
-        if (index == 0)
-            return size + 2;
-        return size + 1;
+        this.setSimplexTableContent(this.simplexMatrix.transposeConvertToCorrectStringFormat());
+        for (int i = 0; i < this.simplexTableContent.size(); i++)
+        {
+            Vector<String> currentCol = this.simplexTableContent.get(i);
+            int len = currentCol.get(0).length();
+            for (String item : currentCol)
+                len = Math.max(len, item.length());
+            this.setColumnWidthByIndex(i, len);
+        }
     }
-    public String setHeaderItem(int colInd)
+    public void calculateMaxBlocksSize()
     {
-        HashMap<Integer, String> headers = new HashMap<>();
-        headers.put(0, "N"); headers.put(1, "Базис"); headers.put(2, "С Базис"); headers.put(3, "B");
-        for (int i = 0; i < this.simplexMatrix.getVariables().size(); i++)
-            headers.put(i + 4, this.simplexMatrix.getVariables().get(i));
-        for (int i = 0; i < this.simplexMatrix.getBasis().size(); i++)
-            headers.put(i + this.simplexMatrix.getVariables().size() + 4, this.simplexMatrix.getBasis().get(i));
-        return headers.get(colInd);
+        int maxLen = 0;
+        for (Vector<String> currentCol : this.simplexTableContent)
+            for (String item : currentCol)
+                maxLen = Math.max(maxLen, item.length());
+        for (int i = 0; i < this.columnsWidth.size(); i++)
+            this.setColumnWidthByIndex(i, maxLen);
     }
     public void createTable()
     {
-        for (int i = 0; i < this.simplexTableContent.size(); i++)
-            this.simplexTable.add(new SimplexTableColumn(i, this.simplexTableContent.get(i)));
+        this.calculateBlocksSize();
+        this.setSimplexTableContent(this.simplexMatrix.convertToCorrectStringFormat());
+        this.simplexTable = new Vector<>();
+        for (int i = 0; i < this.tableHeight; i++)
+        {
+            SimplexTableRow tableRow = new SimplexTableRow(i, this.simplexTableContent.get(i), this.columnsWidth);
+            this.simplexTable.add(tableRow);
+        }
     }
     public void printTable()
     {
-        for (SimplexTableColumn column : this.simplexTable)
-            System.out.print(column.getColumn());
+        for (SimplexTableRow tableRow : this.simplexTable)
+            System.out.print(tableRow.getRow());
     }
 }
